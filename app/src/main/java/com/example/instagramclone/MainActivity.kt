@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.FileProvider
 import com.parse.*
 import java.io.File
@@ -26,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var etDescription: EditText
     lateinit var ivPhoto: ImageView
+    lateinit var pbLoading: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         etDescription = findViewById(R.id.etDescription)
         ivPhoto = findViewById(R.id.ivPhoto)
+        pbLoading = findViewById(R.id.pbLoading)
 
         setButtons()
     }
@@ -62,7 +61,8 @@ class MainActivity : AppCompatActivity() {
             val description = etDescription.text
             val user = ParseUser.getCurrentUser()
             if (photoFile != null) {
-                submitPost(description.toString(), user, photoFile!!)
+                pbLoading.visibility = ProgressBar.VISIBLE
+                TwitterCloneApplication.submitPost(this@MainActivity, description.toString(), user, photoFile!!)
                 onPostSubmitted()
             } else {
                 Log.e("peter", "MainActivity setButtons: photoFile == null", )
@@ -88,24 +88,6 @@ class MainActivity : AppCompatActivity() {
                             Log.i("peter", "MainActivity queryPosts done: $post")
                         }
                     }
-                }
-            }
-        })
-    }
-
-    // Send a Post object to Parse server
-    private fun submitPost(description: String, user: ParseUser, photoFile: File) {
-        val post = Post()
-        post.setDescription(description)
-        post.setUser(user)
-        post.setImage(photoFile)
-        post.saveInBackground(object: SaveCallback {
-            override fun done(e: ParseException?) {
-                if (e == null) {
-                    Toast.makeText(this@MainActivity, "Post submitted", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this@MainActivity, "Error submitting post", Toast.LENGTH_LONG).show()
-                    Log.e("peter", "MainActivity submitPost done: $e", )
                 }
             }
         })
@@ -150,5 +132,7 @@ class MainActivity : AppCompatActivity() {
     private fun onPostSubmitted() {
         etDescription.text = null
         ivPhoto.setImageBitmap(null)
+        pbLoading.visibility = ProgressBar.INVISIBLE
+        Toast.makeText(this, "Post submitted", Toast.LENGTH_LONG).show()
     }
 }
