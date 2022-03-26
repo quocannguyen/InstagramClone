@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Post submitted", Toast.LENGTH_LONG).show()
     }
 
-    fun liveQueries() {
+    private fun liveQueries() {
         Log.d("peter", "MainActivity liveQueries: ")
         val webSocketUrl = "wss://codepathinstagram.b4a.io/"
         val webSocketUri = URI(webSocketUrl)
