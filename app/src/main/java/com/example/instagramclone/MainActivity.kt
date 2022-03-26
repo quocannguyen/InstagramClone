@@ -1,16 +1,22 @@
 package com.example.instagramclone
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.FileProvider
 import com.parse.*
+import com.parse.livequery.ParseLiveQueryClient
+import com.parse.livequery.SubscriptionHandling
 import java.io.File
+import java.net.URI
 
 /**
  * Let user create a post by taking a photo with their camera
@@ -25,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var ivPhoto: ImageView
     lateinit var pbLoading: ProgressBar
 
+    lateinit var subscriptionHandling: SubscriptionHandling<Post>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         pbLoading = findViewById(R.id.pbLoading)
 
         setButtons()
+        liveQueries()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -43,12 +52,29 @@ class MainActivity : AppCompatActivity() {
                 // by this point we have the camera photo on disk
                 val takenImage = BitmapFactory.decodeFile(photoFile!!.absolutePath)
                 // RESIZE BITMAP, see section below
+                val resizedBitmap = Bitmap.createScaledBitmap(takenImage, 150, 100, true)
+                Log.d("peter", "MainActivity onActivityResult: ${resizedBitmap.byteCount}")
                 // Load the taken image into a preview
                 ivPhoto.setImageBitmap(takenImage)
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+//        return super.onCreateOptionsMenu(menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.miSignOut) {
+            ParseUser.logOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setButtons() {
@@ -134,5 +160,33 @@ class MainActivity : AppCompatActivity() {
         ivPhoto.setImageBitmap(null)
         pbLoading.visibility = ProgressBar.INVISIBLE
         Toast.makeText(this, "Post submitted", Toast.LENGTH_LONG).show()
+    }
+
+    fun liveQueries() {
+        Log.d("peter", "MainActivity liveQueries: ")
+        val webSocketUrl = "wss://codepathinstagram.b4a.io/"
+        val webSocketUri = URI(webSocketUrl)
+        val parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient(webSocketUri)
+
+//        val parseQuery = ParseQuery<ParseObject>("Post")
+        val parseQuery = ParseQuery.getQuery(Post::class.java)
+        subscriptionHandling = parseLiveQueryClient!!.subscribe(parseQuery)
+        subscriptionHandling.handleSubscribe {
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE
+            ) { _: ParseQuery<Post?>?, `object`: ParseObject? ->
+    //            runOnUiThread { messagesAdapter!!.addItem(`object`) }
+                Log.d("peter", "MainActivity liveQueries CREATE: $`object`")
+            }
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.DELETE
+            ) { _: ParseQuery<Post?>?, parseObject: ParseObject? ->
+//                runOnUiThread { messagesAdapter!!.removeItem(`object`!!) }
+                Log.d("peter", "MainActivity liveQueries DELETE: $parseObject")
+            }
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE
+            ) { _: ParseQuery<Post?>?, `object`: ParseObject? ->
+//                runOnUiThread { messagesAdapter!!.updateItem(`object`!!) }
+                Log.d("peter", "MainActivity liveQueries UPDATE: $`object`")
+            }
+        }
     }
 }

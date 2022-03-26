@@ -22,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
 
         pbLoading = findViewById(R.id.pbLoading)
 
-//        ParseUser.logOut()
         // Check if there's a user logged in
         // If there is, start MainActivity
         if (ParseUser.getCurrentUser() != null) {
@@ -37,11 +36,11 @@ class LoginActivity : AppCompatActivity() {
         val etPassword = findViewById<EditText>(R.id.etPassword)
         findViewById<Button>(R.id.btnSignUp).setOnClickListener {
             pbLoading.visibility = ProgressBar.VISIBLE
-            signUp(etUsername.text.toString(), etPassword.toString())
+            signUp(etUsername.text.toString(), etPassword.text.toString())
         }
         findViewById<Button>(R.id.btnSignIn).setOnClickListener {
             pbLoading.visibility = ProgressBar.VISIBLE
-            signIn(etUsername.text.toString(), etPassword.toString())
+            signIn(etUsername.text.toString(), etPassword.text.toString())
         }
     }
 

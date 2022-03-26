@@ -42,4 +42,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     // Parse SDK
     implementation "com.github.parse-community.Parse-SDK-Android:parse:3.0.0"
+    implementation 'com.github.parse-community:ParseLiveQuery-Android:1.2.2'
 }
