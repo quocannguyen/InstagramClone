@@ -28,6 +28,10 @@ class Post : ParseObject() {
         get() {
             return getCreatedAt().toString()
         }
+    val likeCount: Int
+        get() {
+            return getInt(KEY_LIKE_COUNT)
+        }
 
     fun setDescription(description: String) {
         put(KEY_DESCRIPTION, description)
@@ -46,5 +50,6 @@ class Post : ParseObject() {
         const val KEY_DESCRIPTION = "description"
         const val KEY_IMAGE = "image"
         const val KEY_USER = "user"
+        const val KEY_LIKE_COUNT = "likeCount"
     }
 }

@@ -13,12 +13,14 @@ class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
     private val ivPhoto: ImageView = itemView.findViewById(R.id.ivPhoto)
     private val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
+    private val tvLikeCount: TextView = itemView.findViewById(R.id.tvLikeCount)
 
     fun bindPost(post: Post) {
         tvUsername.text = post.user?.username
         tvDescription.text = post.description
         Glide.with(itemView).load(post.image?.url).into(ivPhoto)
         tvCreatedAt.text = post.createdAt
+        tvLikeCount.text = "${post.likeCount} likes"
         Log.d("peter", "PostViewHolder bindPost: ${post.createdAt}")
     }
 }
