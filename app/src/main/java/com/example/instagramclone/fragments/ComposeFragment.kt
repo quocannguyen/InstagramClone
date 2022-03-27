@@ -77,15 +77,15 @@ class ComposeFragment : Fragment() {
             when {
                 description.isNullOrEmpty() -> {
                     Log.e("peter", "ComposeFragment setButtons: description.isNullOrEmpty()")
-                    Toast.makeText(requireContext(), "Description is required", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Description is required", Toast.LENGTH_SHORT).show()
                 }
-                photoFile == null -> {
-                    Log.e("peter", "ComposeFragment setButtons: photoFile == null")
-                    Toast.makeText(requireContext(), "Missing photo", Toast.LENGTH_LONG).show()
-                }
+//                photoFile == null -> {
+//                    Log.e("peter", "ComposeFragment setButtons: photoFile == null")
+//                    Toast.makeText(requireContext(), "Missing photo", Toast.LENGTH_SHORT).show()
+//                }
                 else -> {
                     pbLoading.visibility = ProgressBar.VISIBLE
-                    submitPost(requireContext(), description.toString(), user, photoFile!!)
+                    submitPost(requireContext(), description.toString(), user, photoFile)
                 }
             }
         }
@@ -113,7 +113,7 @@ class ComposeFragment : Fragment() {
     }
 
     // Send a Post object to Parse server
-    fun submitPost(context: Context, description: String, user: ParseUser, photoFile: File) {
+    fun submitPost(context: Context, description: String, user: ParseUser, photoFile: File?) {
         val post = Post()
         post.setDescription(description)
         post.setUser(user)
@@ -121,10 +121,10 @@ class ComposeFragment : Fragment() {
         post.saveInBackground(object: SaveCallback {
             override fun done(e: ParseException?) {
                 if (e == null) {
-                    Toast.makeText(context, "Post submitted", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Post submitted", Toast.LENGTH_SHORT).show()
                     onPostSubmitted()
                 } else {
-                    Toast.makeText(context, "Error submitting post", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Error submitting post", Toast.LENGTH_SHORT).show()
                     Log.e("peter", "TwitterCloneApplication submitPost done: $e", )
                 }
             }
@@ -136,7 +136,7 @@ class ComposeFragment : Fragment() {
         photoFile = null
         ivPhoto.setImageBitmap(null)
         pbLoading.visibility = ProgressBar.INVISIBLE
-        Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

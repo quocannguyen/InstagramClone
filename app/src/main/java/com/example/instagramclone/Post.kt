@@ -1,6 +1,5 @@
 package com.example.instagramclone
 
-import android.util.Log
 import com.parse.ParseClassName
 import com.parse.ParseFile
 import com.parse.ParseObject
@@ -33,17 +32,19 @@ class Post : ParseObject() {
     fun setDescription(description: String) {
         put(KEY_DESCRIPTION, description)
     }
-    fun setImage(image: File) {
-        put(KEY_IMAGE, ParseFile(image))
+    fun setImage(image: File?) {
+        if (image != null) {
+            put(KEY_IMAGE, ParseFile(image))
+        }
     }
     fun setUser(user: ParseUser) {
         put(KEY_USER, user)
     }
 
     companion object {
-        val KEY_ID = "objectId"
-        val KEY_DESCRIPTION = "description"
-        val KEY_IMAGE = "image"
-        val KEY_USER = "user"
+        const val KEY_ID = "objectId"
+        const val KEY_DESCRIPTION = "description"
+        const val KEY_IMAGE = "image"
+        const val KEY_USER = "user"
     }
 }
