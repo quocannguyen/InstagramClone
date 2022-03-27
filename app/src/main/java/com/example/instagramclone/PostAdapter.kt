@@ -2,9 +2,10 @@ package com.example.instagramclone
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 
-class PostAdapter(val posts: ArrayList<Post>) : RecyclerView.Adapter<PostViewHolder>() {
+class PostAdapter(private val posts: ArrayList<Post>) : ListAdapter<Post, PostViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_post, parent, false)
@@ -12,21 +13,32 @@ class PostAdapter(val posts: ArrayList<Post>) : RecyclerView.Adapter<PostViewHol
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = posts[position]
+        val post = getItem(position)
         holder.bindPost(post)
-    }
-
-    override fun getItemCount(): Int {
-        return posts.size
     }
 
     fun clear() {
         posts.clear()
-        notifyDataSetChanged()
+        submitList(this.posts)
     }
 
     fun addAll(posts: List<Post>) {
         this.posts.addAll(posts)
-        notifyDataSetChanged()
+        submitList(this.posts)
+    }
+
+    companion object {
+
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<Post> = object : DiffUtil.ItemCallback<Post>() {
+            override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+                return oldItem.description == newItem.description &&
+                        oldItem.user?.getString("objectID") == newItem.user?.getString("objectID") &&
+                        oldItem.image?.data.contentEquals(newItem.image?.data)
+            }
+        }
     }
 }

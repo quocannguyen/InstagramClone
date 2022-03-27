@@ -22,6 +22,7 @@ open class FeedFragment : Fragment() {
     val posts = ArrayList<Post>()
     lateinit var rvPosts: RecyclerView
     lateinit var adapter: PostAdapter
+    lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +38,8 @@ open class FeedFragment : Fragment() {
         rvPosts = view.findViewById(R.id.rvPosts)
         adapter = PostAdapter(posts)
         rvPosts.adapter = adapter
-        rvPosts.layoutManager = LinearLayoutManager(requireContext())
+        linearLayoutManager = LinearLayoutManager(requireContext())
+        rvPosts.layoutManager = linearLayoutManager
 
         queryPosts()
     }

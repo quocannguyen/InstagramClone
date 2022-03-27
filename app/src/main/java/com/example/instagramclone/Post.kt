@@ -9,6 +9,10 @@ import java.io.File
 
 @ParseClassName("Post")
 class Post : ParseObject() {
+    val id: String?
+        get() {
+            return getString(KEY_ID)
+        }
     val description: String?
         get() {
             return getString(KEY_DESCRIPTION)
@@ -37,9 +41,9 @@ class Post : ParseObject() {
     }
 
     companion object {
+        val KEY_ID = "objectId"
         val KEY_DESCRIPTION = "description"
         val KEY_IMAGE = "image"
         val KEY_USER = "user"
-        val KEY_CREATED_AT = "createdAt"
     }
 }
