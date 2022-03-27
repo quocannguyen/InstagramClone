@@ -1,14 +1,12 @@
 package com.example.instagramclone
 
+import android.util.Log
 import com.parse.ParseClassName
 import com.parse.ParseFile
 import com.parse.ParseObject
 import com.parse.ParseUser
 import java.io.File
 
-// description: String
-// image: File
-// user: User
 @ParseClassName("Post")
 class Post : ParseObject() {
     val description: String?
@@ -22,6 +20,10 @@ class Post : ParseObject() {
     val user: ParseUser?
         get() {
             return getParseUser(KEY_USER)
+        }
+    val createdAt: String
+        get() {
+            return getCreatedAt().toString()
         }
 
     fun setDescription(description: String) {
@@ -38,5 +40,6 @@ class Post : ParseObject() {
         val KEY_DESCRIPTION = "description"
         val KEY_IMAGE = "image"
         val KEY_USER = "user"
+        val KEY_CREATED_AT = "createdAt"
     }
 }
