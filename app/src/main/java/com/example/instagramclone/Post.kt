@@ -1,17 +1,14 @@
 package com.example.instagramclone
 
-import com.parse.ParseClassName
-import com.parse.ParseFile
-import com.parse.ParseObject
-import com.parse.ParseUser
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
+import com.example.instagramclone.listeners.OnParseActionListener
+import com.parse.*
 import java.io.File
 
 @ParseClassName("Post")
-class Post : ParseObject() {
-    val id: String?
-        get() {
-            return getString(KEY_ID)
-        }
+class Post() : ParseObject() {
     val description: String?
         get() {
             return getString(KEY_DESCRIPTION)
@@ -32,6 +29,10 @@ class Post : ParseObject() {
         get() {
             return getInt(KEY_LIKE_COUNT)
         }
+    val liked: Boolean
+        get() {
+            return getBoolean(KEY_LIKED)
+        }
 
     fun setDescription(description: String) {
         put(KEY_DESCRIPTION, description)
@@ -44,6 +45,84 @@ class Post : ParseObject() {
     fun setUser(user: ParseUser) {
         put(KEY_USER, user)
     }
+    fun setLikeCount(likeCount: Int) {
+        put(KEY_LIKE_COUNT, likeCount)
+    }
+    fun setLiked(liked: Boolean) {
+        put(KEY_LIKED, liked)
+    }
+
+    constructor(description: String, user: ParseUser, photoFile: File?) : this() {
+        setDescription(description)
+        setUser(user)
+        setImage(photoFile)
+    }
+
+    // Send a Post object to Parse server
+    fun submit(onParseActionListener: OnParseActionListener) {
+        saveInBackground(object: SaveCallback {
+            override fun done(e: ParseException?) {
+                if (e == null) {
+                    onParseActionListener.onParseSuccess()
+                } else {
+                    onParseActionListener.onParseException(e)
+                }
+            }
+        })
+    }
+
+    fun update(description: String?, image: File?, liked: Boolean?, onParseActionListener: OnParseActionListener) {
+        val query = ParseQuery.getQuery(Post::class.java)
+
+        // Retrieve the object by id
+        query.getInBackground(objectId, object: GetCallback<Post> {
+            override fun done(post: Post?, e: ParseException?) {
+                if (e == null) {
+                    if (post != null) {
+                        // Update the fields we want to
+                        if (description != null) {
+                            post.put(KEY_DESCRIPTION, description)
+                            this@Post.setDescription(description)
+                        }
+                        if (image != null) {
+                            post.put(KEY_IMAGE, ParseFile(image))
+                            this@Post.setImage(image)
+                        }
+                        if (liked != null) {
+                            if (this@Post.liked && !liked) {
+                                post.put(KEY_LIKED, false)
+                                post.put(KEY_LIKE_COUNT, likeCount - 1)
+                                this@Post.setLiked(false)
+                                this@Post.setLikeCount(likeCount - 1)
+                            } else if (!this@Post.liked && liked) {
+                                post.put(KEY_LIKED, true)
+                                post.put(KEY_LIKE_COUNT, likeCount + 1)
+                                this@Post.setLiked(true)
+                                this@Post.setLikeCount(likeCount + 1)
+                            }
+                        }
+
+                        // All other fields will remain the same
+                        post.saveInBackground()
+                        onParseActionListener.onParseSuccess()
+                    } else {
+                        Log.e("peter", "Post update done: post == null", )
+                    }
+                } else {
+                    // something went wrong
+                    onParseActionListener.onParseException(e)
+                }
+            }
+        })
+    }
+
+    fun toggleLike(onParseActionListener: OnParseActionListener) {
+        if (liked) {
+            update(null, null, false, onParseActionListener)
+        } else {
+            update(null, null, true, onParseActionListener)
+        }
+    }
 
     companion object {
         const val KEY_ID = "objectId"
@@ -51,5 +130,12 @@ class Post : ParseObject() {
         const val KEY_IMAGE = "image"
         const val KEY_USER = "user"
         const val KEY_LIKE_COUNT = "likeCount"
+        const val KEY_LIKED = "liked"
+
+        fun getPostQuery() : ParseQuery<Post> {
+            val query = ParseQuery.getQuery(Post::class.java)
+            query.orderByDescending("createdAt")
+            return query
+        }
     }
 }

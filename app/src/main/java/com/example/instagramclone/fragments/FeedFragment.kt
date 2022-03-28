@@ -7,16 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.instagramclone.ParseDataSourceFactory
-import com.example.instagramclone.Post
-import com.example.instagramclone.PostAdapter
-import com.example.instagramclone.R
+import com.example.instagramclone.*
 import com.parse.FindCallback
 import com.parse.ParseException
 import com.parse.ParseQuery
@@ -67,11 +61,11 @@ open class FeedFragment : Fragment() {
 
     // Query for all posts on server
     open fun queryPosts() {
-        // Specify which class to query
-        val query = ParseQuery.getQuery(Post::class.java)
-        query.include(Post.KEY_USER)
-        query.orderByDescending("createdAt")
-        query.limit = 20
+        val query = getPostQuery()
+        findPostQueryInBackground(query)
+    }
+
+    fun findPostQueryInBackground(query: ParseQuery<Post>) {
         // Find all Post objects
         query.findInBackground(object: FindCallback<Post> {
             override fun done(posts: MutableList<Post>?, e: ParseException?) {
@@ -90,5 +84,13 @@ open class FeedFragment : Fragment() {
     companion object {
         fun newInstance() =
             FeedFragment()
+
+        fun getPostQuery(): ParseQuery<Post> {
+            // Specify which class to query
+            val query = Post.getPostQuery()
+            query.include(Post.KEY_USER)
+            query.limit = 20
+            return query
+        }
     }
 }

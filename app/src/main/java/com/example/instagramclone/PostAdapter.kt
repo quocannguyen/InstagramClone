@@ -31,7 +31,7 @@ class PostAdapter(private val posts: ArrayList<Post>) : ListAdapter<Post, PostVi
 
         val DIFF_CALLBACK: DiffUtil.ItemCallback<Post> = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.objectId == newItem.objectId
             }
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {

@@ -1,6 +1,5 @@
 package com.example.instagramclone.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,15 +14,13 @@ import androidx.core.content.FileProvider
 import com.example.instagramclone.Post
 import com.example.instagramclone.R
 import com.example.instagramclone.TwitterCloneApplication
+import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
 import com.parse.ParseUser
-import com.parse.SaveCallback
 import java.io.File
 
 class ComposeFragment : Fragment() {
 
-    private val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
-    private val photoFileName = "instagram_clone_photo.jpg"
     private var photoFile: File? = null
 
     lateinit var etDescription: EditText
@@ -85,7 +82,20 @@ class ComposeFragment : Fragment() {
 //                }
                 else -> {
                     pbLoading.visibility = ProgressBar.VISIBLE
-                    submitPost(requireContext(), description.toString(), user, photoFile)
+                    val post = Post(description.toString(), user, photoFile)
+                    post.submit(object: OnParseActionListener {
+                        override fun onParseSuccess() {
+                            etDescription.text = null
+                            photoFile = null
+                            ivPhoto.setImageBitmap(null)
+                            pbLoading.visibility = ProgressBar.INVISIBLE
+                            Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
+                        }
+                        override fun onParseException(parseException: ParseException) {
+                            Toast.makeText(context, "Error submitting post", Toast.LENGTH_SHORT).show()
+                            Log.e("peter", "TwitterCloneApplication submitPost done: $parseException", )
+                        }
+                    })
                 }
             }
         }
@@ -112,34 +122,10 @@ class ComposeFragment : Fragment() {
         }
     }
 
-    // Send a Post object to Parse server
-    fun submitPost(context: Context, description: String, user: ParseUser, photoFile: File?) {
-        val post = Post()
-        post.setDescription(description)
-        post.setUser(user)
-        post.setImage(photoFile)
-        post.saveInBackground(object: SaveCallback {
-            override fun done(e: ParseException?) {
-                if (e == null) {
-                    Toast.makeText(context, "Post submitted", Toast.LENGTH_SHORT).show()
-                    onPostSubmitted()
-                } else {
-                    Toast.makeText(context, "Error submitting post", Toast.LENGTH_SHORT).show()
-                    Log.e("peter", "TwitterCloneApplication submitPost done: $e", )
-                }
-            }
-        })
-    }
-
-    private fun onPostSubmitted() {
-        etDescription.text = null
-        photoFile = null
-        ivPhoto.setImageBitmap(null)
-        pbLoading.visibility = ProgressBar.INVISIBLE
-        Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
-    }
-
     companion object {
+        private const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
+        private const val photoFileName = "instagram_clone_photo.jpg"
+
         fun newInstance(): ComposeFragment {
             return ComposeFragment()
         }

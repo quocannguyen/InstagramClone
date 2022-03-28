@@ -5,15 +5,9 @@ import com.parse.ParseQuery
 
 class ParsePositionalDataSource : PositionalDataSource<Post>() {
 
-    fun getQuery() : ParseQuery<Post> {
-        val query = ParseQuery.getQuery(Post::class.java)
-        query.orderByDescending("createdAt")
-        return query
-    }
-
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Post>) {
         // get basic query
-        val query = getQuery()
+        val query = Post.getPostQuery()
 
         // Use values passed when PagedList was created.
         query.limit = params.requestedLoadSize
@@ -28,7 +22,7 @@ class ParsePositionalDataSource : PositionalDataSource<Post>() {
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Post>) {
-        val query = getQuery()
+        val query = Post.getPostQuery()
 
         query.limit = params.loadSize
         // fetch the next set from a different offset
