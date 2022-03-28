@@ -1,4 +1,4 @@
-package com.example.instagramclone
+package com.example.instagramclone.adapters
 
 import android.util.Log
 import android.view.View
@@ -8,13 +8,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.instagramclone.Post
+import com.example.instagramclone.R
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
 
 class PostViewHolder(
     itemView: View,
-    val onPassingPostListener: OnPassingPostListener?
+    val onViewHolderClickListener: OnPassingPostListener?,
+    val onCommentButtonClickListener: OnPassingPostListener?
 ) : RecyclerView.ViewHolder(itemView) {
 
     lateinit var post: Post
@@ -23,12 +26,13 @@ class PostViewHolder(
     private val ivPhoto: ImageView = itemView.findViewById(R.id.ivPhoto)
     private val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
     private val tvLikeCount: TextView = itemView.findViewById(R.id.tvLikeCount)
-    val btnLike = itemView.findViewById<ImageButton>(R.id.btnLike)
+    private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
+    private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
 
     init {
         itemView.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                onPassingPostListener?.onPostPassed(post)
+                onViewHolderClickListener?.onPostPassed(post)
             }
         })
     }
@@ -58,6 +62,11 @@ class PostViewHolder(
                         Log.e("peter", "Post update: $parseException", )
                     }
                 })
+            }
+        })
+        btnComment.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                onCommentButtonClickListener?.onPostPassed(post)
             }
         })
     }

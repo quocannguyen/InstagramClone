@@ -50,12 +50,12 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/btnSubmit"
+        app:layout_constraintBottom_toTopOf="@+id/btnSubmitPost"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnSubmit"
+        android:id="@+id/btnSubmitPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"

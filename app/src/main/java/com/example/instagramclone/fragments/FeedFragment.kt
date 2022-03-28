@@ -11,19 +11,26 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclone.*
+import com.example.instagramclone.adapters.PostAdapter
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.parse.FindCallback
 import com.parse.ParseException
 import com.parse.ParseQuery
 
-open class FeedFragment : Fragment() {
+open class FeedFragment() : Fragment() {
 
     val posts = ArrayList<Post>()
 //    lateinit var postList : PagedList<Post>
     lateinit var rvPosts: RecyclerView
     lateinit var adapter: PostAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
-    var onPassingPostListener: OnPassingPostListener? = null
+    var onViewHolderClickListener: OnPassingPostListener? = null
+    var onCommentButtonClickListener: OnPassingPostListener? = null
+
+    constructor(onViewHolderClickListener: OnPassingPostListener, onCommentButtonClickListener: OnPassingPostListener) : this() {
+        this.onViewHolderClickListener = onViewHolderClickListener
+        this.onCommentButtonClickListener = onCommentButtonClickListener
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +60,7 @@ open class FeedFragment : Fragment() {
 //        })
 
         rvPosts = view.findViewById(R.id.rvPosts)
-        adapter = PostAdapter(posts, onPassingPostListener)
+        adapter = PostAdapter(posts, onViewHolderClickListener, onCommentButtonClickListener)
         rvPosts.adapter = adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
         rvPosts.layoutManager = linearLayoutManager
@@ -84,8 +91,8 @@ open class FeedFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() =
-            FeedFragment()
+        fun newInstance(onViewHolderClickListener: OnPassingPostListener, onCommentButtonClickListener: OnPassingPostListener) =
+            FeedFragment(onViewHolderClickListener, onCommentButtonClickListener)
 
         fun getPostQuery(): ParseQuery<Post> {
             // Specify which class to query

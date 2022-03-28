@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import com.example.instagramclone.fragments.CommentFragment
 import com.parse.*
 import com.example.instagramclone.fragments.ComposeFragment
 import com.example.instagramclone.fragments.FeedFragment
@@ -52,17 +53,26 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.action_home -> {
-                        val feedFragment = FeedFragment.newInstance()
-                        feedFragment.onPassingPostListener = object: OnPassingPostListener {
-                            override fun onPostPassed(post: Post) {
-                                val bundle = Bundle()
-                                bundle.putParcelable(PARCELABLE_KEY_POST, post)
-                                val postDetailFragment = PostDetailFragment.newInstance(bundle)
-                                supportFragmentManager.beginTransaction()
-                                    .replace(R.id.flContainer, postDetailFragment)
-                                    .commit()
-                            }
-                        }
+                        val feedFragment = FeedFragment.newInstance(
+                            onViewHolderClickListener = object: OnPassingPostListener {
+                                override fun onPostPassed(post: Post) {
+                                    val bundle = Bundle()
+                                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
+                                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
+                                    supportFragmentManager.beginTransaction()
+                                        .replace(R.id.flContainer, postDetailFragment)
+                                        .commit()
+                                }
+                            }, onCommentButtonClickListener = object: OnPassingPostListener {
+                                override fun onPostPassed(post: Post) {
+                                    val bundle = Bundle()
+                                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
+                                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
+                                    supportFragmentManager.beginTransaction()
+                                        .replace(R.id.flContainer, postDetailFragment)
+                                        .commit()
+                                }
+                            })
                         fragmentToShow = feedFragment
                     }
                     R.id.action_compose -> {

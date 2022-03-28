@@ -33,11 +33,20 @@
         android:layout_margin="@dimen/margin"
         android:background="#00FFFFFF"
         android:contentDescription="Like"
-        android:focusable="false"
-        android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivPhoto"
         app:srcCompat="@drawable/ufi_heart" />
+
+    <ImageButton
+        android:id="@+id/btnComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:background="#00FFFFFF"
+        android:contentDescription="Comment"
+        app:layout_constraintStart_toEndOf="@id/btnLike"
+        app:layout_constraintTop_toBottomOf="@+id/ivPhoto"
+        app:srcCompat="@drawable/ufi_comment" />
 
     <TextView
         android:id="@+id/tvLikeCount"

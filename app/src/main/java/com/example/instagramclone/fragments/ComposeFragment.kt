@@ -67,13 +67,13 @@ class ComposeFragment : Fragment() {
             // Launch camera to let user take picture
             launchCamera()
         }
-        view.findViewById<Button>(R.id.btnSubmit).setOnClickListener {
+        view.findViewById<Button>(R.id.btnSubmitPost).setOnClickListener {
             // Submit post to server
-            val description = etDescription.text
+            val description = etDescription.text.toString()
             val user = ParseUser.getCurrentUser()
             when {
-                description.isNullOrEmpty() -> {
-                    Log.e("peter", "ComposeFragment setButtons: description.isNullOrEmpty()")
+                description.isEmpty() -> {
+                    Log.e("peter", "ComposeFragment setButtons: description.isEmpty()")
                     Toast.makeText(requireContext(), "Description is required", Toast.LENGTH_SHORT).show()
                 }
 //                photoFile == null -> {
@@ -82,7 +82,7 @@ class ComposeFragment : Fragment() {
 //                }
                 else -> {
                     pbLoading.visibility = ProgressBar.VISIBLE
-                    val post = Post(description.toString(), user, photoFile)
+                    val post = Post(description, user, photoFile)
                     post.submit(object: OnParseActionListener {
                         override fun onParseSuccess() {
                             etDescription.text = null
@@ -92,8 +92,8 @@ class ComposeFragment : Fragment() {
                             Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
                         }
                         override fun onParseException(parseException: ParseException) {
-                            Toast.makeText(context, "Error submitting post", Toast.LENGTH_SHORT).show()
-                            Log.e("peter", "TwitterCloneApplication submitPost done: $parseException", )
+                            Toast.makeText(requireContext(), "Error submitting post", Toast.LENGTH_SHORT).show()
+                            Log.e("peter", "ComposeFragment submitPost done: $parseException", )
                         }
                     })
                 }

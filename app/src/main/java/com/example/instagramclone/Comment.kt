@@ -4,7 +4,7 @@ import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.*
 
 @ParseClassName("Comment")
-class Comment : ParseObject() {
+class Comment() : ParseObject() {
     val user: ParseUser?
         get() {
             return getParseUser(KEY_USER)
@@ -17,6 +17,22 @@ class Comment : ParseObject() {
         get() {
             return getString(KEY_TEXT)
         }
+
+    fun setUser(user: ParseUser) {
+        put(KEY_USER, user)
+    }
+    fun setPost(post: Post) {
+        put(KEY_POST, post)
+    }
+    fun setText(text: String) {
+        put(KEY_TEXT, text)
+    }
+
+    constructor(user: ParseUser, post: Post, text: String) : this() {
+        setUser(user)
+        setPost(post)
+        setText(text)
+    }
 
     fun submit(onParseActionListener: OnParseActionListener) {
         saveInBackground(object: SaveCallback {
@@ -34,5 +50,11 @@ class Comment : ParseObject() {
         const val KEY_TEXT = "text"
         const val KEY_USER = "user"
         const val KEY_POST = "post"
+
+        fun getCommentQuery() : ParseQuery<Comment> {
+            val query = ParseQuery.getQuery(Comment::class.java)
+            query.orderByDescending("createdAt")
+            return query
+        }
     }
 }

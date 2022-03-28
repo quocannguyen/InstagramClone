@@ -6,16 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
+import com.example.instagramclone.Comment
 import com.example.instagramclone.PARCELABLE_KEY_POST
 import com.example.instagramclone.Post
 import com.example.instagramclone.R
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
+import com.parse.ParseUser
 
 class PostDetailFragment : Fragment() {
 
@@ -25,6 +24,8 @@ class PostDetailFragment : Fragment() {
     lateinit var tvCreatedAt: TextView
     lateinit var ivPhoto: ImageView
     lateinit var btnLike: ImageButton
+    lateinit var btnSubmitComment: Button
+    lateinit var etComment: EditText
     lateinit var post: Post
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,17 +51,19 @@ class PostDetailFragment : Fragment() {
         tvCreatedAt = view.findViewById(R.id.tvCreatedAt)
         ivPhoto = view.findViewById(R.id.ivPhoto)
         btnLike = view.findViewById(R.id.btnLike)
+        btnSubmitComment = view.findViewById(R.id.btnSubmitComment)
+        etComment = view.findViewById(R.id.etComment)
 
         tvUsername.text = post.user?.username
         tvDescription.text = post.description
         Glide.with(requireContext()).load(post.image?.url).into(ivPhoto)
         tvCreatedAt.text = post.createdAt
         tvLikeCount.text = "${post.likeCount} likes"
-        setButton()
+        setButtons()
         setButtonImage()
     }
 
-    private fun setButton() {
+    private fun setButtons() {
         btnLike.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 post.toggleLike(object: OnParseActionListener {
@@ -73,6 +76,27 @@ class PostDetailFragment : Fragment() {
                         Log.e("peter", "Post update: $parseException", )
                     }
                 })
+            }
+        })
+        btnSubmitComment.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                val commentText = etComment.text.toString()
+                if (commentText.isNotEmpty()) {
+                    val comment = Comment(ParseUser.getCurrentUser(), post, commentText)
+                    comment.submit(object: OnParseActionListener {
+                        override fun onParseSuccess() {
+                            etComment.text = null
+                            Toast.makeText(requireContext(), "Comment submitted", Toast.LENGTH_SHORT).show()
+                        }
+                        override fun onParseException(parseException: ParseException) {
+                            Toast.makeText(requireContext(), "Error submitting comment", Toast.LENGTH_SHORT).show()
+                            Log.e("peter", "PostDetailFragment setButtons btnSubmitComment done: $parseException", )
+                        }
+                    })
+                } else {
+                    Log.e("peter", "PostDetailFragment setButtons btnSubmitComment: commentText.isEmpty()")
+                    Toast.makeText(requireContext(), "Comment is empty", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
