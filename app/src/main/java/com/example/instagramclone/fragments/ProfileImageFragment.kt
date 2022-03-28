@@ -15,39 +15,37 @@ import com.example.instagramclone.Post
 import com.example.instagramclone.R
 import com.example.instagramclone.TwitterCloneApplication
 import com.example.instagramclone.listeners.OnParseActionListener
-import com.parse.ParseException
-import com.parse.ParseUser
+import com.parse.*
 import java.io.File
 
-class ComposeFragment : Fragment() {
+class ProfileImageFragment : Fragment() {
 
     private var photoFile: File? = null
+    lateinit var ivProfilePhoto: ImageView
 
-    lateinit var etPostDescription: EditText
-    lateinit var ivPostPhoto: ImageView
-    lateinit var pbLoading: ProgressBar
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_compose, container, false)
+        return inflater.inflate(R.layout.fragment_profile_image, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        etPostDescription = view.findViewById(R.id.etPostDescription)
-        ivPostPhoto = view.findViewById(R.id.ivPostPhoto)
-        pbLoading = view.findViewById(R.id.pbLoading)
+        ivProfilePhoto = view.findViewById(R.id.ivProfilePhoto)
         // Set onClickListeners and setup logic
         setButtons(view)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CAPTURE_POST_IMAGE_REQUEST_CODE) {
+        if (requestCode == CAPTURE_PROFILE_IMAGE_REQUEST_CODE) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
                 // by this point we have the camera photo on disk
                 // RESIZE BITMAP, see section below
@@ -55,7 +53,7 @@ class ComposeFragment : Fragment() {
 //                Log.d("peter", "MainActivity onActivityResult: ${resizedBitmap.byteCount}")
                 val rotatedBitmap = TwitterCloneApplication.rotateBitmapOrientation(photoFile!!.absolutePath)
                 // Load the taken image into a preview
-                ivPostPhoto.setImageBitmap(rotatedBitmap)
+                ivProfilePhoto.setImageBitmap(rotatedBitmap)
             } else { // Result was a failure
                 Toast.makeText(requireContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show()
             }
@@ -67,37 +65,8 @@ class ComposeFragment : Fragment() {
             // Launch camera to let user take picture
             launchCamera()
         }
-        view.findViewById<Button>(R.id.btnSubmitPost).setOnClickListener {
-            // Submit post to server
-            val description = etPostDescription.text.toString()
-            val user = ParseUser.getCurrentUser()
-            when {
-                description.isEmpty() -> {
-                    Log.e("peter", "ComposeFragment setButtons: description.isEmpty()")
-                    Toast.makeText(requireContext(), "Description is required", Toast.LENGTH_SHORT).show()
-                }
-//                photoFile == null -> {
-//                    Log.e("peter", "ComposeFragment setButtons: photoFile == null")
-//                    Toast.makeText(requireContext(), "Missing photo", Toast.LENGTH_SHORT).show()
-//                }
-                else -> {
-                    pbLoading.visibility = ProgressBar.VISIBLE
-                    val post = Post(description, user, photoFile)
-                    post.submit(object: OnParseActionListener {
-                        override fun onParseSuccess() {
-                            etPostDescription.text = null
-                            photoFile = null
-                            ivPostPhoto.setImageBitmap(null)
-                            pbLoading.visibility = ProgressBar.INVISIBLE
-                            Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
-                        }
-                        override fun onParseException(parseException: ParseException) {
-                            Toast.makeText(requireContext(), "Error submitting post", Toast.LENGTH_SHORT).show()
-                            Log.e("peter", "ComposeFragment submitPost done: $parseException", )
-                        }
-                    })
-                }
-            }
+        view.findViewById<Button>(R.id.btnSubmitProfilePhoto).setOnClickListener {
+            updateProfilePhoto()
         }
     }
 
@@ -117,17 +86,39 @@ class ComposeFragment : Fragment() {
             // So as long as the result is not null, it's safe to use the intent.
             if (intent.resolveActivity(requireContext().packageManager) != null) {
                 // Start the image capture intent to take photo
-                startActivityForResult(intent, CAPTURE_POST_IMAGE_REQUEST_CODE)
+                startActivityForResult(intent, CAPTURE_PROFILE_IMAGE_REQUEST_CODE)
             }
         }
     }
 
-    companion object {
-        private const val CAPTURE_POST_IMAGE_REQUEST_CODE = 1034
-        private const val photoFileName = "instagram_clone_post_photo.jpg"
+    private fun updateProfilePhoto() {
+        val currentUser = ParseUser.getCurrentUser()
+        if (currentUser != null) {
+            currentUser.put("profilePhoto", ParseFile(photoFile));
 
-        fun newInstance(): ComposeFragment {
-            return ComposeFragment()
+            // Saves the object.
+            currentUser.saveInBackground(object: SaveCallback {
+                override fun done(e: ParseException?) {
+                    if (e == null) {
+                        //Save successful
+                        photoFile = null
+                        ivProfilePhoto.setImageBitmap(null)
+                        Toast.makeText(requireContext(), "Save Successful", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Something went wrong while saving
+                        Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                        Log.e("peter", "ProfileImageFragment updateProfilePhoto done: $e", )
+                    }
+                }
+            })
         }
+    }
+
+    companion object {
+        private const val CAPTURE_PROFILE_IMAGE_REQUEST_CODE = 1034
+        private const val photoFileName = "instagram_clone_profile_photo.jpg"
+
+        fun newInstance() =
+            ProfileImageFragment()
     }
 }

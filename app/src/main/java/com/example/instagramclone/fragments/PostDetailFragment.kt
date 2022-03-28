@@ -9,10 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
-import com.example.instagramclone.Comment
-import com.example.instagramclone.PARCELABLE_KEY_POST
-import com.example.instagramclone.Post
-import com.example.instagramclone.R
+import com.example.instagramclone.*
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
 import com.parse.ParseUser
@@ -29,6 +26,7 @@ class PostDetailFragment : Fragment() {
     lateinit var etComment: EditText
     lateinit var post: Post
     lateinit var commentFragment: CommentFragment
+    lateinit var ivPostProfileImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +54,9 @@ class PostDetailFragment : Fragment() {
         btnSubmitComment = view.findViewById(R.id.btnSubmitComment)
         etComment = view.findViewById(R.id.etCommentText)
         commentFragment = FragmentManager.findFragment(view.findViewById(R.id.fragComments))
+        ivPostProfileImage = view.findViewById(R.id.ivPostProfileImage)
 
+        Glide.with(requireContext()).load(TwitterCloneApplication.getProfileImageUrl(post.user)).into(ivPostProfileImage)
         tvUsername.text = post.user?.username
         tvDescription.text = post.description
         Glide.with(requireContext()).load(post.image?.url).into(ivPhoto)

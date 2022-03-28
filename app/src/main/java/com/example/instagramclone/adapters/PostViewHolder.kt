@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.instagramclone.Post
 import com.example.instagramclone.R
+import com.example.instagramclone.TwitterCloneApplication
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
@@ -28,6 +29,7 @@ class PostViewHolder(
     private val tvPostLikeCount: TextView = itemView.findViewById(R.id.tvPostLikeCount)
     private val btnLikePost: ImageButton = itemView.findViewById(R.id.btnLikePost)
     private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
+    private val ivPostProfileImage: ImageView = itemView.findViewById(R.id.ivPostProfileImage)
 
     init {
         itemView.setOnClickListener(object: View.OnClickListener {
@@ -44,6 +46,8 @@ class PostViewHolder(
         Glide.with(itemView).load(post.image?.url).into(ivPostPhoto)
         tvPostCreatedAt.text = post.createdAt
         tvPostLikeCount.text = "${post.likeCount} likes"
+        Glide.with(itemView).load(TwitterCloneApplication.getProfileImageUrl(post.user)).into(ivPostProfileImage)
+
         setButton()
         setButtonImage()
     }

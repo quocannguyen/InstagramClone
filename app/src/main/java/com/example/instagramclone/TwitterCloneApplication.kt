@@ -13,7 +13,10 @@ import com.parse.livequery.ParseLiveQueryClient
 import com.parse.livequery.SubscriptionHandling
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
+import java.math.BigInteger
 import java.net.URI
+import java.security.MessageDigest
 
 
 class TwitterCloneApplication : Application() {
@@ -103,6 +106,28 @@ class TwitterCloneApplication : Application() {
                     Log.d("peter", "MainActivity liveQueries UPDATE: $`object`")
                 }
             }
+        }
+
+        private fun getGravatarUrl(userId: String?): String {
+            var hex = ""
+            try {
+                val digest = MessageDigest.getInstance("MD5")
+                val hash = digest.digest(userId?.toByteArray())
+                val bigInt = BigInteger(hash)
+                hex = bigInt.abs().toString(16)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return "https://www.gravatar.com/avatar/$hex?d=identicon"
+        }
+
+        fun getProfileImageUrl(user: ParseUser?): String {
+            val profileImage = user?.getParseFile("profilePhoto")
+            val profileImageUrl = when (profileImage) {
+                null -> getGravatarUrl(user?.objectId)
+                else -> profileImage.url
+            }
+            return profileImageUrl
         }
     }
 }

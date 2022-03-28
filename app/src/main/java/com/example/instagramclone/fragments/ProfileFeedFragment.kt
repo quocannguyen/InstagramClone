@@ -3,7 +3,7 @@ package com.example.instagramclone.fragments
 import com.example.instagramclone.Post
 import com.parse.ParseUser
 
-class ProfileFragment() : FeedFragment() {
+class ProfileFeedFragment() : FeedFragment() {
 
     override fun queryPosts() {
         val query = getPostQuery()
@@ -12,6 +12,6 @@ class ProfileFragment() : FeedFragment() {
     }
 
     companion object {
-        fun newInstance() = ProfileFragment()
+        fun newInstance() = ProfileFeedFragment()
     }
 }

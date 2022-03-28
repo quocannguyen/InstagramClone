@@ -6,11 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import com.example.instagramclone.fragments.CommentFragment
+import com.example.instagramclone.fragments.*
 import com.parse.*
-import com.example.instagramclone.fragments.ComposeFragment
-import com.example.instagramclone.fragments.FeedFragment
-import com.example.instagramclone.fragments.PostDetailFragment
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -41,6 +38,12 @@ class MainActivity : AppCompatActivity() {
             ParseUser.logOut()
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }
+        if (item.itemId == R.id.miProfileImage) {
+            val profileImageFragment = ProfileImageFragment.newInstance()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.flContainer, profileImageFragment)
+                .commit()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -79,14 +82,7 @@ class MainActivity : AppCompatActivity() {
                         fragmentToShow = ComposeFragment.newInstance()
                     }
                     R.id.action_profile -> {
-//                        fragmentToShow = ProfileFragment.newInstance(object: OnFragmentCallListener {
-//                            override fun onFragmentCall(post: Post) {
-////                                Log.d("peter", "MainActivity onFragmentCall: $string")
-////                                supportFragmentManager.beginTransaction()
-////                                    .replace(R.id.flContainer, PostDetailFragment.newInstance())
-////                                    .commit()
-//                            }
-//                        })
+                        fragmentToShow = ProfileFeedFragment.newInstance()
                     }
                 }
 

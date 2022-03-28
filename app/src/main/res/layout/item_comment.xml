@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/ivCommentProfileImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
     <TextView
         android:id="@+id/tvCommentUsername"
         android:layout_width="wrap_content"
@@ -12,7 +21,7 @@
         android:layout_margin="@dimen/margin"
         android:text="Comment Username"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivCommentProfileImage"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
