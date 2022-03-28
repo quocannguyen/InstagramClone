@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvPostUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
@@ -16,38 +16,38 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivPhoto"
+        android:id="@+id/ivPostPhoto"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_margin="@dimen/margin"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUsername"
+        app:layout_constraintTop_toBottomOf="@+id/tvPostUsername"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageButton
-        android:id="@+id/btnLike"
+        android:id="@+id/btnLikePost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:background="#00FFFFFF"
         android:contentDescription="Like"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/ivPostPhoto"
         app:srcCompat="@drawable/ufi_heart" />
 
     <TextView
-        android:id="@+id/tvLikeCount"
+        android:id="@+id/tvPostLikeCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:text="0 likes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLike" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLikePost" />
 
     <TextView
-        android:id="@+id/tvDescription"
+        android:id="@+id/tvPostDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
@@ -55,27 +55,27 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLikeCount" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPostLikeCount" />
 
     <TextView
-        android:id="@+id/tvCreatedAt"
+        android:id="@+id/tvPostCreatedAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
         android:text="Created At"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPostDescription" />
 
     <fragment
-        android:id="@+id/fragComment"
+        android:id="@+id/fragComments"
         android:name="com.example.instagramclone.fragments.CommentFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@id/etComment"
+        app:layout_constraintBottom_toTopOf="@id/etCommentText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCreatedAt" />
+        app:layout_constraintTop_toBottomOf="@id/tvPostCreatedAt" />
 
     <Button
         android:id="@+id/btnSubmitComment"
@@ -87,7 +87,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/etComment"
+        android:id="@+id/etCommentText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/min_size"

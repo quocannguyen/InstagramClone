@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.example.instagramclone.Comment
 import com.example.instagramclone.PARCELABLE_KEY_POST
@@ -27,6 +28,7 @@ class PostDetailFragment : Fragment() {
     lateinit var btnSubmitComment: Button
     lateinit var etComment: EditText
     lateinit var post: Post
+    lateinit var commentFragment: CommentFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,14 +47,15 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvUsername = view.findViewById(R.id.tvUsername)
-        tvLikeCount = view.findViewById(R.id.tvLikeCount)
-        tvDescription = view.findViewById(R.id.tvDescription)
-        tvCreatedAt = view.findViewById(R.id.tvCreatedAt)
-        ivPhoto = view.findViewById(R.id.ivPhoto)
-        btnLike = view.findViewById(R.id.btnLike)
+        tvUsername = view.findViewById(R.id.tvPostUsername)
+        tvLikeCount = view.findViewById(R.id.tvPostLikeCount)
+        tvDescription = view.findViewById(R.id.tvPostDescription)
+        tvCreatedAt = view.findViewById(R.id.tvPostCreatedAt)
+        ivPhoto = view.findViewById(R.id.ivPostPhoto)
+        btnLike = view.findViewById(R.id.btnLikePost)
         btnSubmitComment = view.findViewById(R.id.btnSubmitComment)
-        etComment = view.findViewById(R.id.etComment)
+        etComment = view.findViewById(R.id.etCommentText)
+        commentFragment = FragmentManager.findFragment(view.findViewById(R.id.fragComments))
 
         tvUsername.text = post.user?.username
         tvDescription.text = post.description
@@ -61,6 +64,7 @@ class PostDetailFragment : Fragment() {
         tvLikeCount.text = "${post.likeCount} likes"
         setButtons()
         setButtonImage()
+        commentFragment.queryCommentsByPost(post)
     }
 
     private fun setButtons() {
@@ -87,6 +91,7 @@ class PostDetailFragment : Fragment() {
                         override fun onParseSuccess() {
                             etComment.text = null
                             Toast.makeText(requireContext(), "Comment submitted", Toast.LENGTH_SHORT).show()
+                            commentFragment.commentAdapter.add(comment)
                         }
                         override fun onParseException(parseException: ParseException) {
                             Toast.makeText(requireContext(), "Error submitting comment", Toast.LENGTH_SHORT).show()

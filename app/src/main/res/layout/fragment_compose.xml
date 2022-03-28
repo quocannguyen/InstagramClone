@@ -7,7 +7,7 @@
     tools:context=".fragments.ComposeFragment">
 
     <EditText
-        android:id="@+id/etDescription"
+        android:id="@+id/etPostDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
@@ -27,10 +27,10 @@
         android:text="Take Photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/etPostDescription" />
 
     <ImageView
-        android:id="@+id/ivPhoto"
+        android:id="@+id/ivPostPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"

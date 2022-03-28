@@ -22,7 +22,7 @@ open class FeedFragment() : Fragment() {
     val posts = ArrayList<Post>()
 //    lateinit var postList : PagedList<Post>
     lateinit var rvPosts: RecyclerView
-    lateinit var adapter: PostAdapter
+    lateinit var postAdapter: PostAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
     var onViewHolderClickListener: OnPassingPostListener? = null
     var onCommentButtonClickListener: OnPassingPostListener? = null
@@ -60,8 +60,8 @@ open class FeedFragment() : Fragment() {
 //        })
 
         rvPosts = view.findViewById(R.id.rvPosts)
-        adapter = PostAdapter(posts, onViewHolderClickListener, onCommentButtonClickListener)
-        rvPosts.adapter = adapter
+        postAdapter = PostAdapter(posts, onViewHolderClickListener, onCommentButtonClickListener)
+        rvPosts.adapter = postAdapter
         linearLayoutManager = LinearLayoutManager(requireContext())
         rvPosts.layoutManager = linearLayoutManager
 
@@ -77,13 +77,13 @@ open class FeedFragment() : Fragment() {
     fun findPostQueryInBackground(query: ParseQuery<Post>) {
         // Find all Post objects
         query.findInBackground(object: FindCallback<Post> {
-            override fun done(posts: MutableList<Post>?, e: ParseException?) {
+            override fun done(objects: MutableList<Post>?, e: ParseException?) {
                 if (e != null) {
                     Log.e("peter", "FeedFragment queryPosts done: $e")
                     Toast.makeText(requireContext(), "Error fetching posts", Toast.LENGTH_LONG).show()
                 } else {
-                    if (posts != null) {
-                        adapter.addAll(posts)
+                    if (objects != null) {
+                        postAdapter.addAll(objects)
                     }
                 }
             }

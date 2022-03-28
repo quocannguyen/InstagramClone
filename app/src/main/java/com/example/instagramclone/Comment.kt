@@ -54,6 +54,14 @@ class Comment() : ParseObject() {
         fun getCommentQuery() : ParseQuery<Comment> {
             val query = ParseQuery.getQuery(Comment::class.java)
             query.orderByDescending("createdAt")
+            query.include(KEY_USER)
+            query.include(KEY_POST)
+            return query
+        }
+
+        fun getCommentQueryByPost(post: Post) : ParseQuery<Comment> {
+            val query = getCommentQuery()
+            query.whereEqualTo(KEY_POST, post)
             return query
         }
     }

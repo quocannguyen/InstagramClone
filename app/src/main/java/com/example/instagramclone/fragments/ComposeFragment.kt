@@ -23,8 +23,8 @@ class ComposeFragment : Fragment() {
 
     private var photoFile: File? = null
 
-    lateinit var etDescription: EditText
-    lateinit var ivPhoto: ImageView
+    lateinit var etPostDescription: EditText
+    lateinit var ivPostPhoto: ImageView
     lateinit var pbLoading: ProgressBar
 
     override fun onCreateView(
@@ -38,8 +38,8 @@ class ComposeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        etDescription = view.findViewById(R.id.etDescription)
-        ivPhoto = view.findViewById(R.id.ivPhoto)
+        etPostDescription = view.findViewById(R.id.etPostDescription)
+        ivPostPhoto = view.findViewById(R.id.ivPostPhoto)
         pbLoading = view.findViewById(R.id.pbLoading)
         // Set onClickListeners and setup logic
         setButtons(view)
@@ -55,7 +55,7 @@ class ComposeFragment : Fragment() {
 //                Log.d("peter", "MainActivity onActivityResult: ${resizedBitmap.byteCount}")
                 val rotatedBitmap = TwitterCloneApplication.rotateBitmapOrientation(photoFile!!.absolutePath)
                 // Load the taken image into a preview
-                ivPhoto.setImageBitmap(rotatedBitmap)
+                ivPostPhoto.setImageBitmap(rotatedBitmap)
             } else { // Result was a failure
                 Toast.makeText(requireContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show()
             }
@@ -69,7 +69,7 @@ class ComposeFragment : Fragment() {
         }
         view.findViewById<Button>(R.id.btnSubmitPost).setOnClickListener {
             // Submit post to server
-            val description = etDescription.text.toString()
+            val description = etPostDescription.text.toString()
             val user = ParseUser.getCurrentUser()
             when {
                 description.isEmpty() -> {
@@ -85,9 +85,9 @@ class ComposeFragment : Fragment() {
                     val post = Post(description, user, photoFile)
                     post.submit(object: OnParseActionListener {
                         override fun onParseSuccess() {
-                            etDescription.text = null
+                            etPostDescription.text = null
                             photoFile = null
-                            ivPhoto.setImageBitmap(null)
+                            ivPostPhoto.setImageBitmap(null)
                             pbLoading.visibility = ProgressBar.INVISIBLE
                             Toast.makeText(requireContext(), "Post submitted", Toast.LENGTH_SHORT).show()
                         }
