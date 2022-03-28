@@ -4,12 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.example.instagramclone.listeners.OnPassingPostListener
 
-class PostAdapter(private val posts: ArrayList<Post>) : ListAdapter<Post, PostViewHolder>(DIFF_CALLBACK) {
+class PostAdapter(
+    private val posts: ArrayList<Post>,
+    val onPassingPostListener: OnPassingPostListener?
+) : ListAdapter<Post, PostViewHolder>(DIFF_CALLBACK) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_post, parent, false)
-        return PostViewHolder(view)
+        return PostViewHolder(view, onPassingPostListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {

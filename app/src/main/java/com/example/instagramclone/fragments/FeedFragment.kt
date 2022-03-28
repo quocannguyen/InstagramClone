@@ -11,6 +11,7 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclone.*
+import com.example.instagramclone.listeners.OnPassingPostListener
 import com.parse.FindCallback
 import com.parse.ParseException
 import com.parse.ParseQuery
@@ -22,6 +23,7 @@ open class FeedFragment : Fragment() {
     lateinit var rvPosts: RecyclerView
     lateinit var adapter: PostAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
+    var onPassingPostListener: OnPassingPostListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +53,7 @@ open class FeedFragment : Fragment() {
 //        })
 
         rvPosts = view.findViewById(R.id.rvPosts)
-        adapter = PostAdapter(posts)
+        adapter = PostAdapter(posts, onPassingPostListener)
         rvPosts.adapter = adapter
         linearLayoutManager = LinearLayoutManager(requireContext())
         rvPosts.layoutManager = linearLayoutManager

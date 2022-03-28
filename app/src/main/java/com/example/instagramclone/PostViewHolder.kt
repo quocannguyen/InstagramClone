@@ -8,10 +8,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.instagramclone.listeners.OnPassingPostListener
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.ParseException
 
-class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class PostViewHolder(
+    itemView: View,
+    val onPassingPostListener: OnPassingPostListener?
+) : RecyclerView.ViewHolder(itemView) {
 
     lateinit var post: Post
     private val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
@@ -20,6 +24,14 @@ class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
     private val tvLikeCount: TextView = itemView.findViewById(R.id.tvLikeCount)
     val btnLike = itemView.findViewById<ImageButton>(R.id.btnLike)
+
+    init {
+        itemView.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                onPassingPostListener?.onPostPassed(post)
+            }
+        })
+    }
 
     fun bindPost(post: Post) {
         this.post = post
@@ -39,7 +51,7 @@ class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     override fun onParseSuccess() {
                         tvLikeCount.text = "${post.likeCount} likes"
                         setButtonImage()
-                        this@PostViewHolder.bindingAdapter?.notifyDataSetChanged()
+                        this@PostViewHolder.bindingAdapter?.notifyItemChanged(this@PostViewHolder.bindingAdapterPosition)
                     }
                     override fun onParseException(parseException: ParseException) {
                         Toast.makeText(itemView.context, parseException.message, Toast.LENGTH_SHORT).show()

@@ -9,7 +9,8 @@ import androidx.fragment.app.Fragment
 import com.parse.*
 import com.example.instagramclone.fragments.ComposeFragment
 import com.example.instagramclone.fragments.FeedFragment
-import com.example.instagramclone.fragments.ProfileFragment
+import com.example.instagramclone.fragments.PostDetailFragment
+import com.example.instagramclone.listeners.OnPassingPostListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -17,6 +18,7 @@ import com.google.android.material.navigation.NavigationBarView
 /**
  * Let user create a post by taking a photo with their camera
  */
+const val PARCELABLE_KEY_POST = "post"
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,13 +52,31 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.action_home -> {
-                        fragmentToShow = FeedFragment.newInstance()
+                        val feedFragment = FeedFragment.newInstance()
+                        feedFragment.onPassingPostListener = object: OnPassingPostListener {
+                            override fun onPostPassed(post: Post) {
+                                val bundle = Bundle()
+                                bundle.putParcelable(PARCELABLE_KEY_POST, post)
+                                val postDetailFragment = PostDetailFragment.newInstance(bundle)
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.flContainer, postDetailFragment)
+                                    .commit()
+                            }
+                        }
+                        fragmentToShow = feedFragment
                     }
                     R.id.action_compose -> {
                         fragmentToShow = ComposeFragment.newInstance()
                     }
                     R.id.action_profile -> {
-                        fragmentToShow = ProfileFragment.newInstance()
+//                        fragmentToShow = ProfileFragment.newInstance(object: OnFragmentCallListener {
+//                            override fun onFragmentCall(post: Post) {
+////                                Log.d("peter", "MainActivity onFragmentCall: $string")
+////                                supportFragmentManager.beginTransaction()
+////                                    .replace(R.id.flContainer, PostDetailFragment.newInstance())
+////                                    .commit()
+//                            }
+//                        })
                     }
                 }
 

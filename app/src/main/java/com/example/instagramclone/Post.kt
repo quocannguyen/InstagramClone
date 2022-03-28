@@ -1,14 +1,15 @@
 package com.example.instagramclone
 
-import android.content.Context
+import android.os.Parcelable
 import android.util.Log
-import android.widget.Toast
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.*
+import kotlinx.parcelize.Parcelize
 import java.io.File
 
 @ParseClassName("Post")
-class Post() : ParseObject() {
+@Parcelize
+class Post() : ParseObject(), Parcelable {
     val description: String?
         get() {
             return getString(KEY_DESCRIPTION)
@@ -125,7 +126,6 @@ class Post() : ParseObject() {
     }
 
     companion object {
-        const val KEY_ID = "objectId"
         const val KEY_DESCRIPTION = "description"
         const val KEY_IMAGE = "image"
         const val KEY_USER = "user"

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tvUsername"
@@ -33,8 +33,6 @@
         android:layout_margin="@dimen/margin"
         android:background="#00FFFFFF"
         android:contentDescription="Like"
-        android:focusable="false"
-        android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivPhoto"
         app:srcCompat="@drawable/ufi_heart" />

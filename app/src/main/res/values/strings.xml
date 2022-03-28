@@ -2,5 +2,4 @@
     <string name="app_name">Instagram Clone</string>
     <string name="back4app_server_url">https://parseapi.back4app.com</string>
     <string name="file_provider_authority">com.instagramclone.fileprovider</string>
-<!--    <string name="hello_blank_fragment">Hello blank fragment</string>-->
 </resources>
