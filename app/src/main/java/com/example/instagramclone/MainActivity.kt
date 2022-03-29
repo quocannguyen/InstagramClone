@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.instagramclone.fragments.*
 import com.parse.*
 import com.example.instagramclone.listeners.OnPassingPostListener
+import com.example.instagramclone.listeners.OnPassingUserListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -58,34 +59,13 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.action_home -> {
-                        val feedFragment = FeedFragment.newInstance(
-                            onViewHolderClickListener = object: OnPassingPostListener {
-                                override fun onPostPassed(post: Post) {
-                                    val bundle = Bundle()
-                                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
-                                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
-                                    supportFragmentManager.beginTransaction()
-                                        .replace(R.id.flContainer, postDetailFragment)
-                                        .commit()
-                                }
-                            })
-                        fragmentToShow = feedFragment
+                        fragmentToShow = getFeedFragment()
                     }
                     R.id.action_compose -> {
                         fragmentToShow = ComposeFragment.newInstance()
                     }
                     R.id.action_profile -> {
-                        fragmentToShow = ProfileFeedFragment.newInstance(
-                            onViewHolderClickListener = object: OnPassingPostListener {
-                                override fun onPostPassed(post: Post) {
-                                    val bundle = Bundle()
-                                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
-                                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
-                                    supportFragmentManager.beginTransaction()
-                                        .replace(R.id.flContainer, postDetailFragment)
-                                        .commit()
-                                }
-                            })
+                        fragmentToShow = getProfileFeedFragment(ParseUser.getCurrentUser())
                     }
                 }
 
@@ -94,5 +74,44 @@ class MainActivity : AppCompatActivity() {
             }
         })
         bottomNavigationView.selectedItemId = R.id.action_home
+    }
+
+    private fun getFeedFragment(): FeedFragment {
+        return FeedFragment.newInstance(
+            onViewHolderClickListener = object: OnPassingPostListener {
+                override fun onPostPassed(post: Post) {
+                    val bundle = Bundle()
+                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
+                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.flContainer, postDetailFragment)
+                        .commit()
+                }
+            },
+            onProfileClickListener = object: OnPassingUserListener {
+                override fun onUserPassed(user: ParseUser) {
+                    val profileFeedFragment = getProfileFeedFragment(user)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.flContainer, profileFeedFragment)
+                        .commit()
+                }
+            }
+        )
+    }
+
+    private fun getProfileFeedFragment(user: ParseUser): ProfileFeedFragment {
+        return ProfileFeedFragment.newInstance(
+            user,
+            onViewHolderClickListener = object: OnPassingPostListener {
+                override fun onPostPassed(post: Post) {
+                    val bundle = Bundle()
+                    bundle.putParcelable(PARCELABLE_KEY_POST, post)
+                    val postDetailFragment = PostDetailFragment.newInstance(bundle)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.flContainer, postDetailFragment)
+                        .commit()
+                }
+            }
+        )
     }
 }

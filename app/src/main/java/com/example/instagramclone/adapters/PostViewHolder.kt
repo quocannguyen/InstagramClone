@@ -14,12 +14,14 @@ import com.example.instagramclone.TwitterCloneApplication
 import com.example.instagramclone.UserPostInteraction
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.example.instagramclone.listeners.OnParseActionListener
+import com.example.instagramclone.listeners.OnPassingUserListener
 import com.parse.ParseException
 import com.parse.ParseUser
 
 class PostViewHolder(
     itemView: View,
-    val onViewHolderClickListener: OnPassingPostListener?
+    val onViewHolderClickListener: OnPassingPostListener?,
+    val onProfileClickListener: OnPassingUserListener?
 ) : RecyclerView.ViewHolder(itemView) {
 
     lateinit var post: Post
@@ -35,6 +37,16 @@ class PostViewHolder(
         itemView.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 onViewHolderClickListener?.onPostPassed(post)
+            }
+        })
+        tvPostUsername.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                launchProfile()
+            }
+        })
+        ivPostProfileImage.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                launchProfile()
             }
         })
     }
@@ -80,5 +92,9 @@ class PostViewHolder(
                 false -> btnLikePost.setImageResource(R.drawable.ufi_heart)
             }
         }
+    }
+
+    private fun launchProfile() {
+        onProfileClickListener?.onUserPassed(post.user!!)
     }
 }

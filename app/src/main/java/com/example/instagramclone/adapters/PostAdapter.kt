@@ -8,15 +8,17 @@ import com.example.instagramclone.Post
 import com.example.instagramclone.PostDiffCallback
 import com.example.instagramclone.R
 import com.example.instagramclone.listeners.OnPassingPostListener
+import com.example.instagramclone.listeners.OnPassingUserListener
 
 class PostAdapter(
-    private val onViewHolderClickListener: OnPassingPostListener?
+    private val onViewHolderClickListener: OnPassingPostListener?,
+    private val onProfileClickListener: OnPassingUserListener?
 ) : ListAdapter<Post, PostViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_post, parent, false)
-        return PostViewHolder(view, onViewHolderClickListener)
+        return PostViewHolder(view, onViewHolderClickListener, onProfileClickListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.instagramclone.*
 import com.example.instagramclone.adapters.PostAdapter
 import com.example.instagramclone.listeners.OnPassingPostListener
+import com.example.instagramclone.listeners.OnPassingUserListener
 import com.parse.FindCallback
 import com.parse.ParseException
 import com.parse.ParseQuery
@@ -26,9 +27,14 @@ open class FeedFragment() : Fragment() {
     lateinit var postAdapter: PostAdapter
     private lateinit var mLayoutManager: RecyclerView.LayoutManager
     var onViewHolderClickListener: OnPassingPostListener? = null
+    var onProfileClickListener: OnPassingUserListener? = null
 
-    constructor(onViewHolderClickListener: OnPassingPostListener) : this() {
+    constructor(
+        onViewHolderClickListener: OnPassingPostListener,
+        onProfileClickListener: OnPassingUserListener
+    ) : this() {
         this.onViewHolderClickListener = onViewHolderClickListener
+        this.onProfileClickListener = onProfileClickListener
     }
 
     override fun onCreateView(
@@ -43,7 +49,7 @@ open class FeedFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         rvPosts = view.findViewById(R.id.rvPosts)
-        postAdapter = PostAdapter(onViewHolderClickListener)
+        postAdapter = PostAdapter(onViewHolderClickListener, onProfileClickListener)
         rvPosts.adapter = postAdapter
         mLayoutManager = getLayoutManager()
         rvPosts.layoutManager = mLayoutManager
@@ -81,7 +87,9 @@ open class FeedFragment() : Fragment() {
     }
 
     companion object {
-        fun newInstance(onViewHolderClickListener: OnPassingPostListener) =
-            FeedFragment(onViewHolderClickListener)
+        fun newInstance(
+            onViewHolderClickListener: OnPassingPostListener,
+            onProfileClickListener: OnPassingUserListener
+        ) = FeedFragment(onViewHolderClickListener, onProfileClickListener)
     }
 }

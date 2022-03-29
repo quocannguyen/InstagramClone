@@ -3,16 +3,23 @@ package com.example.instagramclone.fragments
 import com.example.instagramclone.ParseDataSourceFactory
 import com.example.instagramclone.Post
 import com.example.instagramclone.listeners.OnPassingPostListener
+import com.example.instagramclone.listeners.OnPassingUserListener
 import com.parse.ParseUser
 
 class ProfileFeedFragment() : FeedFragment() {
 
-    constructor(onViewHolderClickListener: OnPassingPostListener) : this() {
+    lateinit var user: ParseUser
+
+    constructor(
+        user: ParseUser,
+        onViewHolderClickListener: OnPassingPostListener
+    ) : this() {
+        this.user = user
         this.onViewHolderClickListener = onViewHolderClickListener
     }
 
     override fun getParseDataSourceFactory(): ParseDataSourceFactory {
-        return ParseDataSourceFactory(ParseUser.getCurrentUser())
+        return ParseDataSourceFactory(user)
     }
 
 //    override fun getLayoutManager(): RecyclerView.LayoutManager {
@@ -20,7 +27,9 @@ class ProfileFeedFragment() : FeedFragment() {
 //    }
 
     companion object {
-        fun newInstance(onViewHolderClickListener: OnPassingPostListener) =
-            ProfileFeedFragment(onViewHolderClickListener)
+        fun newInstance(
+            user: ParseUser,
+            onViewHolderClickListener: OnPassingPostListener
+        ) = ProfileFeedFragment(user, onViewHolderClickListener)
     }
 }
