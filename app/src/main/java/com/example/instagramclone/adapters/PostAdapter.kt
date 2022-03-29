@@ -10,14 +10,13 @@ import com.example.instagramclone.listeners.OnPassingPostListener
 
 class PostAdapter(
     private val posts: ArrayList<Post>,
-    private val onViewHolderClickListener: OnPassingPostListener?,
-    private val onCommentButtonClickListener: OnPassingPostListener?
+    private val onViewHolderClickListener: OnPassingPostListener?
 ) : ListAdapter<Post, PostViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_post, parent, false)
-        return PostViewHolder(view, onViewHolderClickListener, onCommentButtonClickListener)
+        return PostViewHolder(view, onViewHolderClickListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {

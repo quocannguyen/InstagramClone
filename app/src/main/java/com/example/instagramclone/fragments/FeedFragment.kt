@@ -23,13 +23,11 @@ open class FeedFragment() : Fragment() {
 //    lateinit var postList : PagedList<Post>
     lateinit var rvPosts: RecyclerView
     lateinit var postAdapter: PostAdapter
-    lateinit var linearLayoutManager: LinearLayoutManager
+    lateinit var mLayoutManager: RecyclerView.LayoutManager
     var onViewHolderClickListener: OnPassingPostListener? = null
-    var onCommentButtonClickListener: OnPassingPostListener? = null
 
-    constructor(onViewHolderClickListener: OnPassingPostListener, onCommentButtonClickListener: OnPassingPostListener) : this() {
+    constructor(onViewHolderClickListener: OnPassingPostListener) : this() {
         this.onViewHolderClickListener = onViewHolderClickListener
-        this.onCommentButtonClickListener = onCommentButtonClickListener
     }
 
     override fun onCreateView(
@@ -60,10 +58,10 @@ open class FeedFragment() : Fragment() {
 //        })
 
         rvPosts = view.findViewById(R.id.rvPosts)
-        postAdapter = PostAdapter(posts, onViewHolderClickListener, onCommentButtonClickListener)
+        postAdapter = PostAdapter(posts, onViewHolderClickListener)
         rvPosts.adapter = postAdapter
-        linearLayoutManager = LinearLayoutManager(requireContext())
-        rvPosts.layoutManager = linearLayoutManager
+        mLayoutManager = getLayoutManager()
+        rvPosts.layoutManager = mLayoutManager
 
         queryPosts()
     }
@@ -90,9 +88,13 @@ open class FeedFragment() : Fragment() {
         })
     }
 
+    open fun getLayoutManager(): RecyclerView.LayoutManager {
+        return LinearLayoutManager(requireContext())
+    }
+
     companion object {
-        fun newInstance(onViewHolderClickListener: OnPassingPostListener, onCommentButtonClickListener: OnPassingPostListener) =
-            FeedFragment(onViewHolderClickListener, onCommentButtonClickListener)
+        fun newInstance(onViewHolderClickListener: OnPassingPostListener) =
+            FeedFragment(onViewHolderClickListener)
 
         fun getPostQuery(): ParseQuery<Post> {
             // Specify which class to query

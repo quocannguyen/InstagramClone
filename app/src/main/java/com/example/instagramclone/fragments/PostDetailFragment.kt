@@ -21,7 +21,7 @@ class PostDetailFragment : Fragment() {
     lateinit var tvDescription: TextView
     lateinit var tvCreatedAt: TextView
     lateinit var ivPhoto: ImageView
-    lateinit var btnLike: ImageButton
+    lateinit var btnLikePost: ImageButton
     lateinit var btnSubmitComment: Button
     lateinit var etComment: EditText
     lateinit var post: Post
@@ -50,7 +50,7 @@ class PostDetailFragment : Fragment() {
         tvDescription = view.findViewById(R.id.tvPostDescription)
         tvCreatedAt = view.findViewById(R.id.tvPostCreatedAt)
         ivPhoto = view.findViewById(R.id.ivPostPhoto)
-        btnLike = view.findViewById(R.id.btnLikePost)
+        btnLikePost = view.findViewById(R.id.btnLikePost)
         btnSubmitComment = view.findViewById(R.id.btnSubmitComment)
         etComment = view.findViewById(R.id.etCommentText)
         commentFragment = FragmentManager.findFragment(view.findViewById(R.id.fragComments))
@@ -68,9 +68,9 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setButtons() {
-        btnLike.setOnClickListener(object: View.OnClickListener {
+        btnLikePost.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-                post.toggleLike(object: OnParseActionListener {
+                UserPostInteraction.toggleLikePost(ParseUser.getCurrentUser(), post, object: OnParseActionListener {
                     override fun onParseSuccess() {
                         tvLikeCount.text = "${post.likeCount} likes"
                         setButtonImage()
@@ -107,9 +107,13 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setButtonImage() {
-        when (post.liked) {
-            true -> btnLike.setImageResource(R.drawable.ufi_heart_active)
-            false -> btnLike.setImageResource(R.drawable.ufi_heart)
+        val userPostInteraction = UserPostInteraction.userPostInteractions[UserPostInteraction.Key(
+            ParseUser.getCurrentUser(), post)]
+        if (userPostInteraction != null) {
+            when (userPostInteraction.liked) {
+                true -> btnLikePost.setImageResource(R.drawable.ufi_heart_active)
+                false -> btnLikePost.setImageResource(R.drawable.ufi_heart)
+            }
         }
     }
 

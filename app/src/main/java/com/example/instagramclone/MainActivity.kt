@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         setBottomNavigation()
         TwitterCloneApplication.liveQueries()
+        UserPostInteraction.initializeHashMap(ParseUser.getCurrentUser())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,7 +67,15 @@ class MainActivity : AppCompatActivity() {
                                         .replace(R.id.flContainer, postDetailFragment)
                                         .commit()
                                 }
-                            }, onCommentButtonClickListener = object: OnPassingPostListener {
+                            })
+                        fragmentToShow = feedFragment
+                    }
+                    R.id.action_compose -> {
+                        fragmentToShow = ComposeFragment.newInstance()
+                    }
+                    R.id.action_profile -> {
+                        fragmentToShow = ProfileFeedFragment.newInstance(
+                            onViewHolderClickListener = object: OnPassingPostListener {
                                 override fun onPostPassed(post: Post) {
                                     val bundle = Bundle()
                                     bundle.putParcelable(PARCELABLE_KEY_POST, post)
@@ -76,13 +85,6 @@ class MainActivity : AppCompatActivity() {
                                         .commit()
                                 }
                             })
-                        fragmentToShow = feedFragment
-                    }
-                    R.id.action_compose -> {
-                        fragmentToShow = ComposeFragment.newInstance()
-                    }
-                    R.id.action_profile -> {
-                        fragmentToShow = ProfileFeedFragment.newInstance()
                     }
                 }
 

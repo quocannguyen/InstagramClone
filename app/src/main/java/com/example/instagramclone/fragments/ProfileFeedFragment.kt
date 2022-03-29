@@ -1,9 +1,14 @@
 package com.example.instagramclone.fragments
 
 import com.example.instagramclone.Post
+import com.example.instagramclone.listeners.OnPassingPostListener
 import com.parse.ParseUser
 
 class ProfileFeedFragment() : FeedFragment() {
+
+    constructor(onViewHolderClickListener: OnPassingPostListener) : this() {
+        this.onViewHolderClickListener = onViewHolderClickListener
+    }
 
     override fun queryPosts() {
         val query = getPostQuery()
@@ -11,7 +16,12 @@ class ProfileFeedFragment() : FeedFragment() {
         findPostQueryInBackground(query)
     }
 
+//    override fun getLayoutManager(): RecyclerView.LayoutManager {
+//        return GridLayoutManager(requireContext(), 3)
+//    }
+
     companion object {
-        fun newInstance() = ProfileFeedFragment()
+        fun newInstance(onViewHolderClickListener: OnPassingPostListener) =
+            ProfileFeedFragment(onViewHolderClickListener)
     }
 }

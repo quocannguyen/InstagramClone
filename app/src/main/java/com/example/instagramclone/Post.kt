@@ -1,7 +1,6 @@
 package com.example.instagramclone
 
 import android.os.Parcelable
-import android.util.Log
 import com.example.instagramclone.listeners.OnParseActionListener
 import com.parse.*
 import kotlinx.parcelize.Parcelize
@@ -30,10 +29,6 @@ class Post() : ParseObject(), Parcelable {
         get() {
             return getInt(KEY_LIKE_COUNT)
         }
-    val liked: Boolean
-        get() {
-            return getBoolean(KEY_LIKED)
-        }
 
     fun setDescription(description: String) {
         put(KEY_DESCRIPTION, description)
@@ -48,9 +43,6 @@ class Post() : ParseObject(), Parcelable {
     }
     fun setLikeCount(likeCount: Int) {
         put(KEY_LIKE_COUNT, likeCount)
-    }
-    fun setLiked(liked: Boolean) {
-        put(KEY_LIKED, liked)
     }
 
     constructor(description: String, user: ParseUser, photoFile: File?) : this() {
@@ -72,43 +64,29 @@ class Post() : ParseObject(), Parcelable {
         })
     }
 
-    fun update(description: String?, image: File?, liked: Boolean?, onParseActionListener: OnParseActionListener) {
+    fun update(description: String?, image: File?, likeCount: Int?, onParseActionListener: OnParseActionListener) {
         val query = ParseQuery.getQuery(Post::class.java)
 
         // Retrieve the object by id
         query.getInBackground(objectId, object: GetCallback<Post> {
-            override fun done(post: Post?, e: ParseException?) {
+            override fun done(post: Post, e: ParseException?) {
                 if (e == null) {
-                    if (post != null) {
-                        // Update the fields we want to
-                        if (description != null) {
-                            post.put(KEY_DESCRIPTION, description)
-                            this@Post.setDescription(description)
-                        }
-                        if (image != null) {
-                            post.put(KEY_IMAGE, ParseFile(image))
-                            this@Post.setImage(image)
-                        }
-                        if (liked != null) {
-                            if (this@Post.liked && !liked) {
-                                post.put(KEY_LIKED, false)
-                                post.put(KEY_LIKE_COUNT, likeCount - 1)
-                                this@Post.setLiked(false)
-                                this@Post.setLikeCount(likeCount - 1)
-                            } else if (!this@Post.liked && liked) {
-                                post.put(KEY_LIKED, true)
-                                post.put(KEY_LIKE_COUNT, likeCount + 1)
-                                this@Post.setLiked(true)
-                                this@Post.setLikeCount(likeCount + 1)
-                            }
-                        }
-
-                        // All other fields will remain the same
-                        post.saveInBackground()
-                        onParseActionListener.onParseSuccess()
-                    } else {
-                        Log.e("peter", "Post update done: post == null", )
+                    // Update the fields we want to
+                    if (description != null) {
+                        post.put(KEY_DESCRIPTION, description)
+                        this@Post.setDescription(description)
                     }
+                    if (image != null) {
+                        post.put(KEY_IMAGE, ParseFile(image))
+                        this@Post.setImage(image)
+                    }
+                    if (likeCount != null) {
+                        post.setLikeCount(likeCount)
+                        this@Post.setLikeCount(likeCount)
+                    }
+
+                    post.saveInBackground()
+                    onParseActionListener.onParseSuccess()
                 } else {
                     // something went wrong
                     onParseActionListener.onParseException(e)
@@ -117,20 +95,11 @@ class Post() : ParseObject(), Parcelable {
         })
     }
 
-    fun toggleLike(onParseActionListener: OnParseActionListener) {
-        if (liked) {
-            update(null, null, false, onParseActionListener)
-        } else {
-            update(null, null, true, onParseActionListener)
-        }
-    }
-
     companion object {
         const val KEY_DESCRIPTION = "description"
         const val KEY_IMAGE = "image"
         const val KEY_USER = "user"
         const val KEY_LIKE_COUNT = "likeCount"
-        const val KEY_LIKED = "liked"
 
         fun getPostQuery() : ParseQuery<Post> {
             val query = ParseQuery.getQuery(Post::class.java)
