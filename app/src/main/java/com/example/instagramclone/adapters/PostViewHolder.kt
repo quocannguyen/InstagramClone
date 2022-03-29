@@ -83,9 +83,7 @@ class PostViewHolder(
     }
 
     private fun setButtonImage() {
-        Log.d("peter", "PostViewHolder setButtonImage: ${UserPostInteraction.interactionsByUser}")
         val userPostInteraction = UserPostInteraction.interactionsByUser[post.objectId]
-        Log.d("peter", "PostViewHolder setButtonImage: $userPostInteraction")
         if (userPostInteraction != null) {
             when (userPostInteraction.liked) {
                 true -> btnLikePost.setImageResource(R.drawable.ufi_heart_active)
