@@ -11,15 +11,12 @@ class UserPostInteraction() : ParseObject() {
         get() {
             return getParseUser(KEY_USER)
         }
-    var post: Post? = null
+    var post: Post
         get() {
             return getParseObject(KEY_POST) as Post
         }
         set(post) {
-            if (post != null) {
-                put(KEY_POST, post)
-            }
-            field = post
+            put(KEY_POST, post)
         }
     val liked: Boolean
         get() {
@@ -39,6 +36,10 @@ class UserPostInteraction() : ParseObject() {
         setLiked(liked)
     }
 
+    override fun toString(): String {
+        return "UserPostInteraction(id=$objectId)"
+    }
+
     fun submit(onParseActionListener: OnParseActionListener) {
         saveInBackground(object: SaveCallback {
             override fun done(e: ParseException?) {
@@ -52,49 +53,35 @@ class UserPostInteraction() : ParseObject() {
     }
 
     fun update(liked: Boolean, onParseActionListener: OnParseActionListener) {
-        val query = ParseQuery.getQuery(UserPostInteraction::class.java)
-        query.getInBackground(objectId, object: GetCallback<UserPostInteraction> {
-            override fun done(userPostInteraction: UserPostInteraction, e: ParseException?) {
-                if (e == null) {
-                    val post = userPostInteraction.post
-                    if (userPostInteraction.liked && !liked) {
-                        post?.update(null, null, post.fetchIfNeeded<Post>().likeCount + 1, onParseActionListener)
-                    } else if (!userPostInteraction.liked && liked) {
-                        post?.update(null, null, post.fetchIfNeeded<Post>().likeCount - 1, onParseActionListener)
-                    }
+        if (this.liked && !liked) {
+            post?.update(null, null, post?.likeCount?.minus(1), onParseActionListener)
+        } else if (!this.liked && liked) {
+            post?.update(null, null, post?.likeCount?.plus(1), onParseActionListener)
+        }
 
-                    userPostInteraction.setLiked(liked)
-                    this@UserPostInteraction.setLiked(liked)
-                    userPostInteraction.saveInBackground()
-                } else {
-                    Log.e("peter", "UserPostInteraction update getInBackground done: $e", )
-                    onParseActionListener.onParseException(e)
-                }
-            }
-        })
+        setLiked(liked)
+        saveInBackground()
     }
-
-    class Key(user: ParseUser, post: Post) : UserPostInteractionKey(user, post) {}
 
     companion object {
         const val KEY_USER = "user"
         const val KEY_POST = "post"
         const val KEY_LIKED = "liked"
 
-        val userPostInteractions = HashMap<Key, UserPostInteraction>()
+        // Key is post.objectId
+        val interactionsByUser = HashMap<String, UserPostInteraction>()
 
         fun initializeHashMap(user: ParseUser?) {
+            interactionsByUser.clear()
             val query = getUserPostInteractionQuery(user, null)
             query.findInBackground(object: FindCallback<UserPostInteraction> {
                 override fun done(objects: MutableList<UserPostInteraction>?, e: ParseException?) {
                     if (e == null) {
                         if (objects != null) {
                             for (userPostInteraction in objects) {
-                                if (userPostInteraction.user != null) {
-                                    userPostInteractions[Key(
-                                        userPostInteraction.user!!,
-                                        userPostInteraction.post!!
-                                    )] = userPostInteraction
+                                val post = userPostInteraction.post
+                                if (post != null) {
+                                    interactionsByUser[post.objectId] = userPostInteraction
                                 }
                             }
                         }
@@ -120,15 +107,17 @@ class UserPostInteraction() : ParseObject() {
         }
 
         fun toggleLikePost(user: ParseUser, post: Post, onParseActionListener: OnParseActionListener) {
-            if (userPostInteractions.containsKey(Key(user, post))) {
-                val userPostInteraction = userPostInteractions[Key(user, post)]
+            if (interactionsByUser.containsKey(post.objectId)) {
+                val userPostInteraction = interactionsByUser[post.objectId]
+                // Re-assigning post
+                userPostInteraction?.post = post
                 userPostInteraction?.update(!userPostInteraction.liked, onParseActionListener)
             } else {
                 val userPostInteraction = UserPostInteraction(user, post, false)
                 userPostInteraction.submit(object: OnParseActionListener {
                     override fun onParseSuccess() {
                         userPostInteraction.update(true, onParseActionListener)
-                        userPostInteractions[Key(user, post)] = userPostInteraction
+                        interactionsByUser[post.objectId] = userPostInteraction
                     }
                     override fun onParseException(parseException: ParseException) {
                         Log.e("peter", "UserPostInteraction toggleLikePost onParseException: $parseException", )

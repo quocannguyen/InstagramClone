@@ -51,6 +51,10 @@ class Post() : ParseObject(), Parcelable {
         setImage(photoFile)
     }
 
+    override fun toString(): String {
+        return "Post(id=$objectId)"
+    }
+
     // Send a Post object to Parse server
     fun submit(onParseActionListener: OnParseActionListener) {
         saveInBackground(object: SaveCallback {
@@ -65,30 +69,22 @@ class Post() : ParseObject(), Parcelable {
     }
 
     fun update(description: String?, image: File?, likeCount: Int?, onParseActionListener: OnParseActionListener) {
-        val query = ParseQuery.getQuery(Post::class.java)
+        // Update the fields we want to
+        if (description != null) {
+            setDescription(description)
+        }
+        if (image != null) {
+            setImage(image)
+        }
+        if (likeCount != null) {
+            setLikeCount(likeCount)
+        }
 
-        // Retrieve the object by id
-        query.getInBackground(objectId, object: GetCallback<Post> {
-            override fun done(post: Post, e: ParseException?) {
+        saveInBackground(object: SaveCallback {
+            override fun done(e: ParseException?) {
                 if (e == null) {
-                    // Update the fields we want to
-                    if (description != null) {
-                        post.put(KEY_DESCRIPTION, description)
-                        this@Post.setDescription(description)
-                    }
-                    if (image != null) {
-                        post.put(KEY_IMAGE, ParseFile(image))
-                        this@Post.setImage(image)
-                    }
-                    if (likeCount != null) {
-                        post.setLikeCount(likeCount)
-                        this@Post.setLikeCount(likeCount)
-                    }
-
-                    post.saveInBackground()
                     onParseActionListener.onParseSuccess()
                 } else {
-                    // something went wrong
                     onParseActionListener.onParseException(e)
                 }
             }
