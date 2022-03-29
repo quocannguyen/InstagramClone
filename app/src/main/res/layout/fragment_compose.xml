@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textMultiLine"
         android:hint="Description"
         android:layout_margin="@dimen/margin"
         app:layout_constraintEnd_toEndOf="parent"

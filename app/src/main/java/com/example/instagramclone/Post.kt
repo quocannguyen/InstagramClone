@@ -95,15 +95,29 @@ class Post() : ParseObject(), Parcelable {
         })
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other is Post) {
+            val otherPost = other.fetchIfNeeded<Post>()
+            return description == otherPost.description &&
+                    user?.objectId == otherPost.user?.objectId &&
+                    image?.data.contentEquals(otherPost.image?.data)
+        }
+        return super.equals(other)
+    }
+
     companion object {
         const val KEY_DESCRIPTION = "description"
         const val KEY_IMAGE = "image"
         const val KEY_USER = "user"
         const val KEY_LIKE_COUNT = "likeCount"
 
-        fun getPostQuery() : ParseQuery<Post> {
+        fun getPostQuery(user: ParseUser?) : ParseQuery<Post> {
             val query = ParseQuery.getQuery(Post::class.java)
             query.orderByDescending("createdAt")
+            query.include(KEY_USER)
+            if (user != null) {
+                query.whereEqualTo(KEY_USER, user)
+            }
             return query
         }
     }

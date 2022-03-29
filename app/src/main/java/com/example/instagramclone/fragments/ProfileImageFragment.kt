@@ -94,7 +94,11 @@ class ProfileImageFragment : Fragment() {
     private fun updateProfilePhoto() {
         val currentUser = ParseUser.getCurrentUser()
         if (currentUser != null) {
-            currentUser.put("profilePhoto", ParseFile(photoFile));
+            if (photoFile == null) {
+                // TODO: Deal with null
+            } else {
+                currentUser.put("profilePhoto", ParseFile(photoFile))
+            }
 
             // Saves the object.
             currentUser.saveInBackground(object: SaveCallback {
@@ -117,6 +121,7 @@ class ProfileImageFragment : Fragment() {
     companion object {
         private const val CAPTURE_PROFILE_IMAGE_REQUEST_CODE = 1034
         private const val photoFileName = "instagram_clone_profile_photo.jpg"
+        const val KEY_PROFILE_PHOTO = "profilePhoto"
 
         fun newInstance() =
             ProfileImageFragment()

@@ -1,5 +1,6 @@
 package com.example.instagramclone.fragments
 
+import com.example.instagramclone.ParseDataSourceFactory
 import com.example.instagramclone.Post
 import com.example.instagramclone.listeners.OnPassingPostListener
 import com.parse.ParseUser
@@ -10,10 +11,8 @@ class ProfileFeedFragment() : FeedFragment() {
         this.onViewHolderClickListener = onViewHolderClickListener
     }
 
-    override fun queryPosts() {
-        val query = getPostQuery()
-        query.whereEqualTo(Post.KEY_USER, ParseUser.getCurrentUser())
-        findPostQueryInBackground(query)
+    override fun getParseDataSourceFactory(): ParseDataSourceFactory {
+        return ParseDataSourceFactory(ParseUser.getCurrentUser())
     }
 
 //    override fun getLayoutManager(): RecyclerView.LayoutManager {

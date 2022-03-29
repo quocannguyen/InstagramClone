@@ -11,9 +11,15 @@ class UserPostInteraction() : ParseObject() {
         get() {
             return getParseUser(KEY_USER)
         }
-    val post: Post
+    var post: Post? = null
         get() {
             return getParseObject(KEY_POST) as Post
+        }
+        set(post) {
+            if (post != null) {
+                put(KEY_POST, post)
+            }
+            field = post
         }
     val liked: Boolean
         get() {
@@ -23,16 +29,13 @@ class UserPostInteraction() : ParseObject() {
     fun setUser(user: ParseUser) {
         put(KEY_USER, user)
     }
-    fun setPost(post: Post) {
-        put(KEY_POST, post)
-    }
     fun setLiked(liked: Boolean) {
         put(KEY_LIKED, liked)
     }
 
     constructor(user: ParseUser, post: Post, liked: Boolean) : this() {
         setUser(user)
-        setPost(post)
+        this.post = post
         setLiked(liked)
     }
 
@@ -55,9 +58,9 @@ class UserPostInteraction() : ParseObject() {
                 if (e == null) {
                     val post = userPostInteraction.post
                     if (userPostInteraction.liked && !liked) {
-                        post.update(null, null, post.fetchIfNeeded<Post>().likeCount + 1, onParseActionListener)
+                        post?.update(null, null, post.fetchIfNeeded<Post>().likeCount + 1, onParseActionListener)
                     } else if (!userPostInteraction.liked && liked) {
-                        post.update(null, null, post.fetchIfNeeded<Post>().likeCount - 1, onParseActionListener)
+                        post?.update(null, null, post.fetchIfNeeded<Post>().likeCount - 1, onParseActionListener)
                     }
 
                     userPostInteraction.setLiked(liked)
@@ -90,7 +93,7 @@ class UserPostInteraction() : ParseObject() {
                                 if (userPostInteraction.user != null) {
                                     userPostInteractions[Key(
                                         userPostInteraction.user!!,
-                                        userPostInteraction.post
+                                        userPostInteraction.post!!
                                     )] = userPostInteraction
                                 }
                             }

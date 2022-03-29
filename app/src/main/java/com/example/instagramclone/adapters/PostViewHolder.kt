@@ -55,17 +55,17 @@ class PostViewHolder(
     private fun setButton() {
         btnLikePost.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-//                UserPostInteraction.toggleLikePost(ParseUser.getCurrentUser(), post, object: OnParseActionListener {
-//                    override fun onParseSuccess() {
-//                        tvPostLikeCount.text = "${post.likeCount} likes"
-//                        setButtonImage()
-//                        this@PostViewHolder.bindingAdapter?.notifyItemChanged(this@PostViewHolder.bindingAdapterPosition)
-//                    }
-//                    override fun onParseException(parseException: ParseException) {
-//                        Toast.makeText(itemView.context, parseException.message, Toast.LENGTH_SHORT).show()
-//                        Log.e("peter", "Post update: $parseException", )
-//                    }
-//                })
+                UserPostInteraction.toggleLikePost(ParseUser.getCurrentUser(), post, object: OnParseActionListener {
+                    override fun onParseSuccess() {
+                        tvPostLikeCount.text = "${post.likeCount} likes"
+                        setButtonImage()
+                        this@PostViewHolder.bindingAdapter?.notifyItemChanged(this@PostViewHolder.bindingAdapterPosition)
+                    }
+                    override fun onParseException(parseException: ParseException) {
+                        Toast.makeText(itemView.context, parseException.message, Toast.LENGTH_SHORT).show()
+                        Log.e("peter", "Post update: $parseException", )
+                    }
+                })
             }
         })
     }

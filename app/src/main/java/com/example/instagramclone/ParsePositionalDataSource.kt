@@ -1,13 +1,16 @@
 package com.example.instagramclone
 
+import android.util.Log
 import androidx.paging.PositionalDataSource
 import com.parse.ParseQuery
+import com.parse.ParseUser
 
-class ParsePositionalDataSource : PositionalDataSource<Post>() {
+class ParsePositionalDataSource(val user: ParseUser?) : PositionalDataSource<Post>() {
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Post>) {
+        Log.d("peter", "ParsePositionalDataSource loadInitial: ")
         // get basic query
-        val query = Post.getPostQuery()
+        val query = Post.getPostQuery(user)
 
         // Use values passed when PagedList was created.
         query.limit = params.requestedLoadSize
@@ -22,11 +25,12 @@ class ParsePositionalDataSource : PositionalDataSource<Post>() {
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Post>) {
-        val query = Post.getPostQuery()
+        Log.d("peter", "ParsePositionalDataSource loadRange: ")
+        val query = Post.getPostQuery(user)
 
-        query.limit = params.loadSize
         // fetch the next set from a different offset
         query.skip = params.startPosition
+        query.limit = params.loadSize
 
         // synchronous call
         val posts = query.find()
