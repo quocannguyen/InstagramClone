@@ -5,10 +5,9 @@ import androidx.paging.PositionalDataSource
 import com.parse.ParseQuery
 import com.parse.ParseUser
 
-class ParsePositionalDataSource(val user: ParseUser?) : PositionalDataSource<Post>() {
+class PostPositionalDataSource(val user: ParseUser?) : PositionalDataSource<Post>() {
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Post>) {
-        Log.d("peter", "ParsePositionalDataSource loadInitial: ")
         // get basic query
         val query = Post.getPostQuery(user)
 
@@ -19,6 +18,7 @@ class ParsePositionalDataSource(val user: ParseUser?) : PositionalDataSource<Pos
         // run queries synchronously since function is called on a background thread
         val count = query.count()
         val posts = query.find()
+        Log.d("peter", "ParsePositionalDataSource loadInitial requestedLoadSize: ${params.requestedLoadSize}")
 
         // return info back to PagedList
         callback.onResult(posts, params.requestedStartPosition, count)

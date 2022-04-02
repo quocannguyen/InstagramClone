@@ -1,9 +1,8 @@
 package com.example.instagramclone.fragments
 
-import com.example.instagramclone.ParseDataSourceFactory
-import com.example.instagramclone.Post
+import android.util.Log
+import com.example.instagramclone.PostDataSourceFactory
 import com.example.instagramclone.listeners.OnPassingPostListener
-import com.example.instagramclone.listeners.OnPassingUserListener
 import com.parse.ParseUser
 
 class ProfileFeedFragment() : FeedFragment() {
@@ -16,10 +15,11 @@ class ProfileFeedFragment() : FeedFragment() {
     ) : this() {
         this.user = user
         this.onViewHolderClickListener = onViewHolderClickListener
+        Log.d("peter", "ProfileFeedFragment: ")
     }
 
-    override fun getParseDataSourceFactory(): ParseDataSourceFactory {
-        return ParseDataSourceFactory(user)
+    override fun getPostDataSourceFactory(): PostDataSourceFactory {
+        return PostDataSourceFactory(user)
     }
 
 //    override fun getLayoutManager(): RecyclerView.LayoutManager {

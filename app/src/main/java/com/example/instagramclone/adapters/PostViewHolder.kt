@@ -71,7 +71,6 @@ class PostViewHolder(
                     override fun onParseSuccess() {
                         tvPostLikeCount.text = "${post.likeCount} likes"
                         setButtonImage()
-                        this@PostViewHolder.bindingAdapter?.notifyItemChanged(this@PostViewHolder.bindingAdapterPosition)
                     }
                     override fun onParseException(parseException: ParseException) {
                         Toast.makeText(itemView.context, parseException.message, Toast.LENGTH_SHORT).show()
